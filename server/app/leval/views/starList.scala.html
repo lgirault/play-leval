@@ -1,0 +1,20 @@
+
+@(login : String)(implicit r: Request[_])
+@main("Le Val") {
+
+    <div><h1>Salon</h1></div>
+    <div>
+        <h1>Étoiles</h1>
+        <ul id="starList" data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
+        </ul>
+    </div>
+
+    @scalajs.html.scripts(
+        "client",
+        routes.Assets.versioned(_).toString,
+        name => getClass.getResource(s"/public/$name") != null)
+
+    <script type="text/javascript">
+      leval.Front().userListInit("@login");
+    </script>
+}
