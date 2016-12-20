@@ -1,11 +1,8 @@
 package leval.actors
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import leval.UserStatus
-//import play.api.libs.json.{JsObject, JsString, JsValue, Json}
+import leval.Message
 
-
-import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
@@ -13,7 +10,7 @@ import io.circe.syntax._
 /**
   * Created by Loïc Girault on 11/30/16.
   */
-import leval.User
+import leval.IdedMessage
 object UserActor {
   def apply( loginActor : ActorRef,
              out : ActorRef) : Props = Props(new UserActor(loginActor, out))
@@ -27,21 +24,16 @@ class UserActor
   var thisLogin : Option[String] = None
 
   def receive: Receive = {
-    case LoginActor.Join(u) =>
-      out ! User(u, UserStatus.Join).asJson.noSpaces
-    case LoginActor.Quit(u) =>
-      out ! User(u, UserStatus.Quit).asJson.noSpaces
-
-    case j : Json =>
-      log info s"json $j received"
+    case msg @ IdedMessage(_, _) => //from loginActor
+      out ! msg.asJson.noSpaces
 
     case str : String =>
-      decode[User](str) match {
-        case Right(User(login, UserStatus.Join)) =>
+      decode[IdedMessage](str) match {
+        case Right(msg @ IdedMessage(login, Message.Join)) =>
           thisLogin = Some(login)
-          loginActor ! LoginActor.Join(login)
+          loginActor ! msg
 
-        case Right(User(login, status)) =>
+        case Right(IdedMessage(login, status)) =>
           println(s"user $status received")
         case Left(_) => ()
       }
@@ -54,10 +46,10 @@ class UserActor
     log info "postStop !"
     thisLogin foreach {
       l =>
-        loginActor ! LoginActor.Quit(l)
+        loginActor ! IdedMessage(l, Message.Quit)
     }
 
   }
 
-  loginActor ! LoginActor.ListRequest
+  loginActor ! Message.ListUserRequest
 }

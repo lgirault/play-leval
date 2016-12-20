@@ -3,40 +3,33 @@ package leval.actors
 import javax.inject.Inject
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import scala.collection.immutable.HashMap
 
+import scala.collection.immutable.HashMap
+import leval.{IdedMessage, Message}
 /**
   * Created by Loïc Girault on 11/30/16.
   */
-
-object LoginActor {
-  case class Join(name : String)
-  case class Quit(name : String)
-  case object ListRequest
-}
-
-import LoginActor._
 class LoginActor @Inject() extends Actor
   with ActorLogging {
 
   var users = HashMap.empty[String, ActorRef]
 
   def receive: Receive = {
-    case ListRequest =>
+    case Message.ListUserRequest =>
       users foreach {
-        case (u, _) => sender() ! Join(u)
+        case (u, _) => sender() ! IdedMessage(u, Message.Join)
       }
 
-    case Join(name) =>
+    case msg @ IdedMessage(name, Message.Join) =>
       users foreach {
-        case (_, r) => r ! Join(name)
+        case (_, r) => r ! msg
       }
       users += (name -> sender())
 
-    case Quit(name) =>
+    case msg @ IdedMessage(name, Message.Quit) =>
       users -= name
       users foreach {
-        case (_, r) => r ! Quit(name)
+        case (_, r) => r ! msg
       }
 
   }

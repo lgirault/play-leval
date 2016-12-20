@@ -1,12 +1,19 @@
 
 @(login : String)(implicit r: Request[_])
-@main("Le Val") {
+@main("Le Val", Seq("dropdownMenu")) {
 
     <div><h1>Salon</h1></div>
-    <div>
+    <div id="starList">
         <h1>Étoiles</h1>
-        <ul id="starList" data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
+        <ul data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
         </ul>
+        <div class="dropdown">
+            <a id="defyLink" >Défier</a>
+            <a id="pmLink" >Discuter</a>
+        </div>
+    </div>
+    <div id="defyMenu">
+
     </div>
 
     @scalajs.html.scripts(
