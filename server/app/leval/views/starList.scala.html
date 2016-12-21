@@ -1,5 +1,6 @@
 
-@(login : String)(implicit r: Request[_])
+@(id : Int, name : String)(implicit r: Request[_])
+
 @main("Le Val", Seq("dropdownMenu")) {
 
     <div><h1>Salon</h1></div>
@@ -22,6 +23,6 @@
         name => getClass.getResource(s"/public/$name") != null)
 
     <script type="text/javascript">
-      leval.Front().userListInit("@login");
+      leval.Front().starListInit(@id, "@name");
     </script>
 }

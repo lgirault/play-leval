@@ -2,10 +2,11 @@ package leval.actors
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import leval.Message
-
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
+import leval.core.PlayerId
+import play.api.Logger
 
 /**
   * Created by Loïc Girault on 11/30/16.
@@ -21,7 +22,7 @@ class UserActor
   out : ActorRef)
   extends Actor with ActorLogging {
 
-  var thisLogin : Option[String] = None
+  var thisId : Option[PlayerId] = None
 
   def receive: Receive = {
     case msg @ IdedMessage(_, _) => //from loginActor
@@ -29,8 +30,9 @@ class UserActor
 
     case str : String =>
       decode[IdedMessage](str) match {
-        case Right(msg @ IdedMessage(login, Message.Join)) =>
-          thisLogin = Some(login)
+        case Right(msg @ IdedMessage(id, Message.Join(login))) =>
+          Logger.info(s"receiving $msg as json")
+          thisId = Some(PlayerId(id, login))
           loginActor ! msg
 
         case Right(IdedMessage(login, status)) =>
@@ -44,9 +46,9 @@ class UserActor
 
   override def postStop(): Unit = {
     log info "postStop !"
-    thisLogin foreach {
-      l =>
-        loginActor ! IdedMessage(l, Message.Quit)
+    thisId foreach {
+      pid =>
+        loginActor ! IdedMessage(pid.uuid, Message.Quit)
     }
 
   }

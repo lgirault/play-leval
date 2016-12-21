@@ -1,9 +1,22 @@
 
 @main("Le Val") {
 
-    @welcome()
+    <div id="welcomeBox">
+        <img src="@routes.Assets.versioned("images/logoval.png")" alt="Logo du val">
+        <form id="loginForm" method="POST" action="@leval.controllers.routes.HomeController.postIndex">
+            Nom d'étoile :
+            <input type="text" name="login">
+            <button type="submit">Jouer</button>
+            <div id="errorBox"> </div>
+        </form>
+    </div>
+
     @scalajs.html.scripts(
         "client",
         routes.Assets.versioned(_).toString,
         name => getClass.getResource(s"/public/$name") != null)
+
+    <script type="text/javascript">
+      leval.Front().loginInit();
+    </script>
 }

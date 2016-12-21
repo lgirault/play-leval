@@ -12,14 +12,13 @@ import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
 
+import leval.core.PlayerId
+
 import scala.collection.immutable.HashMap
-
-
-
 
 trait StarList {
 
-  var users = HashMap.empty[String, Element]
+  var users = HashMap.empty[Int, Element]
 
   val ul : Element = dom.document.querySelector("#starList ul")
   val menu : html.Div = dom.document.querySelector("#starList .dropdown").asInstanceOf[html.Div]
@@ -54,19 +53,19 @@ trait StarList {
     menu.classList remove "show"
   }
 
-  def processUserMsg(u : CSMessage) : Unit = u.content match {
-    case Message.Join =>
+  def processUserMsg(u : CSMessage) : Unit = u match {
+    case CSMessage(userId, Message.Join(userName)) =>
       val li = dom.document.createElement("li").asInstanceOf[html.LI]
       li.classList add "dropbtn"
-      li.textContent = u.user
+      li.textContent = userName
 
-      users += (u.user -> li)
+      users += (userId -> li)
       ul appendChild li
 
       li.onclick = {
         me : MouseEvent =>
 
-          updateMenu(u.user, me.clientX, me.clientY)
+          updateMenu(userName, me.clientX, me.clientY)
 
           dom.window.onclick = {
             me : MouseEvent =>
@@ -77,13 +76,13 @@ trait StarList {
           }
       }
 
-    case Message.Quit =>
-      users get u.user foreach ul.removeChild
-      users -= u.user
+    case CSMessage(userId, Message.Quit) =>
+      users get userId foreach ul.removeChild
+      users -= userId
   }
 
   @JSExport
-  def userListInit(login : String): Unit = {
+  def starListInit(id : Int, name : String): Unit = {
     ws = new WebSocket(ul.getAttribute("data-ws-url"))
 
     ws.onmessage = { (event: MessageEvent) =>
@@ -103,7 +102,8 @@ trait StarList {
 
     ws.onopen = {
       (_ : Event) =>
-        ws send IdedMessage(login, Message.Join).asJson.noSpaces
+        val msg = IdedMessage(id, Message.Join(name)).asJson.noSpaces
+        ws send msg
     }
   }
 
