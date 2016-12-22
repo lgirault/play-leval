@@ -13,8 +13,19 @@
             <a id="pmLink" >Discuter</a>
         </div>
     </div>
-    <div id="defyMenu">
 
+    <div id="defyMenu">
+        Rule :
+        <select name="rule">
+            <option value="sinnlos">Sinnlos</option>
+            <option value="antares">Antarès</option>
+            <option value="helios">Helios</option>
+        </select><br/>
+        <input type ="radio" id="ostein"/> O'Stein <br/>
+        <input type ="radio" id="osteinMulligan"> Autoriser le mulligan <br/>
+        <input type ="radio" disabled />Nédémone <br/>
+        <input type ="radio" disabled />Janus <br/>
+        <button type ="submit">OK</button>
     </div>
 
     @scalajs.html.scripts(

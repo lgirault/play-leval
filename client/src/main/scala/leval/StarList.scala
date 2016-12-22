@@ -3,7 +3,7 @@ package leval
 /**
   * Created by Loïc Girault on 11/30/16.
   */
-import org.scalajs.dom.raw.{MessageEvent, WebSocket}
+import org.scalajs.dom.raw.{FormData, MessageEvent, WebSocket}
 import org.scalajs.dom
 import org.scalajs.dom.{Element, Event, MouseEvent, html}
 
@@ -11,8 +11,6 @@ import scala.scalajs.js.annotation.JSExport
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
-
-import leval.core.PlayerId
 
 import scala.collection.immutable.HashMap
 
@@ -23,10 +21,7 @@ trait StarList {
   val ul : Element = dom.document.querySelector("#starList ul")
   val menu : html.Div = dom.document.querySelector("#starList .dropdown").asInstanceOf[html.Div]
 
-  @JSExport
   var ws : WebSocket = _
-
-
 
 
   def updateMenu(name : String, x : Double, y : Double) : Unit = {
@@ -41,16 +36,6 @@ trait StarList {
     menu.style.left = s"${x - menu.clientWidth/2}px"
     menu.style.top = s"${y}px"
 
-  }
-
-  def hideMenus() : Unit = {
-//    val dds = dom.document.getElementsByClassName("dropdown")
-//
-//    for(i <- 0 until dds.length){
-//      val d = dds(i).asInstanceOf[Element]
-//      d.classList remove "show"
-//    }
-    menu.classList remove "show"
   }
 
   def processUserMsg(u : CSMessage) : Unit = u match {
@@ -70,7 +55,7 @@ trait StarList {
           dom.window.onclick = {
             me : MouseEvent =>
               if( me.target != li ) {
-                hideMenus()
+                menu.classList remove "show"
                 dom.window.onclick = { me: MouseEvent => () }
               }
           }
@@ -81,11 +66,8 @@ trait StarList {
       users -= userId
   }
 
-  @JSExport
-  def starListInit(id : Int, name : String): Unit = {
-    ws = new WebSocket(ul.getAttribute("data-ws-url"))
-
-    ws.onmessage = { (event: MessageEvent) =>
+  val onMessageHandler : MessageEvent => Unit =
+    event =>
       event.data match {
         case msg : String =>
           decode[CSMessage](msg) match {
@@ -98,7 +80,13 @@ trait StarList {
 
       }
 
-    }
+  @JSExport
+  def starListInit(id : Int, name : String): Unit = {
+    ws = new WebSocket(ul.getAttribute("data-ws-url"))
+
+    ws.onmessage = onMessageHandler
+
+    new FormData()
 
     ws.onopen = {
       (_ : Event) =>
