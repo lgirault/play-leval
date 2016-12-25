@@ -18,7 +18,16 @@ case class Rules
     else 2
 }
 
-trait CoreRules {
+object CoreRules {
+
+  val instances : Seq[CoreRules] = Seq(Antares, Sinnlos, Helios)
+
+  def apply(id : String) : Option[CoreRules] =
+    instances find ( _.id == id)
+
+
+}
+sealed trait CoreRules {
 
   val id : String
 
@@ -295,7 +304,7 @@ trait CoreRules {
 
 }
 
-trait SinnlosAntaresCommon {
+sealed trait SinnlosAntaresCommon {
   self : CoreRules =>
 
   def value(c: Card): Int = Card.value(c)
@@ -313,7 +322,7 @@ trait SinnlosAntaresCommon {
 
 }
 
-object Sinnlos
+case object Sinnlos
   extends CoreRules
     with SinnlosAntaresCommon
     with Serializable {
@@ -332,7 +341,7 @@ object Sinnlos
 
 }
 
-trait AntaresHeliosCommon extends CoreRules {
+sealed trait AntaresHeliosCommon extends CoreRules {
 
   def legalLoverFormationAtCreation(c : Formation) : Boolean = true
 
@@ -362,7 +371,7 @@ trait AntaresHeliosCommon extends CoreRules {
   }
 }
 
-object Antares
+case object Antares
   extends AntaresHeliosCommon
     with SinnlosAntaresCommon
     with Serializable{
@@ -370,7 +379,7 @@ object Antares
   override val toString = "Antarès"
 }
 
-object Helios
+case object Helios
   extends AntaresHeliosCommon
     with Serializable {
   val id = "helios"

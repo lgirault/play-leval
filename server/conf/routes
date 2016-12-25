@@ -3,8 +3,9 @@
 # ~~~~
 
 GET     /                           leval.controllers.HomeController.index
-POST    /                           leval.controllers.HomeController.postIndex
+POST    /                           leval.controllers.HomeController.connect
 GET     /ws                         leval.controllers.HomeController.ws
+POST    /defy                       leval.controllers.HomeController.defy
 
 # Map static resources from the /public folder to the /assets URL path #this is the play controllers package
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

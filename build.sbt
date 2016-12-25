@@ -1,19 +1,29 @@
+
 val scalaV = "2.11.8"
 val akkaVersion = "2.4.11"
 val circeVersion = "0.6.1"
 
 def commonSettings = Seq[Setting[_]](
+
   scalaVersion := scalaV,
+
+  shellPrompt :=  { state: State =>
+
+    val extracted = Project.extract(state)
+    import extracted._
+    import play.runsupport.Colors
+
+    (name in currentRef get structure.data).map { name =>
+      "[" + Colors.cyan(name) + "] $ "
+    }.getOrElse("> ")
+
+  },
 
   libraryDependencies ++= Seq(
     "io.circe" %%% "circe-core", ///%%% retrieve scala js version !
     "io.circe" %%% "circe-generic",
     "io.circe" %%% "circe-parser"
-  ).map(_ % circeVersion)/*,
-
-  addCompilerPlugin(
-    "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full
-  )*/
+  ).map(_ % circeVersion)
 )
 
 
@@ -47,9 +57,9 @@ lazy val server = (project in file("server"))
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
     "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
-  ),
+  )//,
   // Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present
-  EclipseKeys.preTasks := Seq(compile in Compile)
+  //EclipseKeys.preTasks := Seq(compile in Compile)
 ).enablePlugins(PlayScala).
   dependsOn(sharedJvm)
 
@@ -59,13 +69,17 @@ lazy val client = (project in file("client")).
   //scalaVersion := scalaV,
   persistLauncher := true,
   persistLauncher in Test := false,
-  libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+  libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+    //libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % Test,
+
+  jsDependencies += RuntimeDOM % Test
+
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb).
   dependsOn(sharedJs)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
-  settings(scalaVersion := scalaV).
-  //settings(commonSettings).
+  settings(commonSettings).
   jsConfigure(_ enablePlugins ScalaJSWeb)
 
 lazy val sharedJvm = shared.jvm

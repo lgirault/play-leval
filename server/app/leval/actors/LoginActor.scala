@@ -43,6 +43,7 @@ class LoginActor @Inject() extends Actor
             Logger.info(s"send $msg to $l")
             r ! msg
         }
+        pending -= uLogin
         users += (uId -> (uLogin, sender()))
       }
 

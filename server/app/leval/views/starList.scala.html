@@ -1,39 +1,28 @@
 
-@(id : Int, name : String)(implicit r: Request[_])
+@import leval.core.PlayerId
 
-@main("Le Val", Seq("dropdownMenu")) {
+@(pid: PlayerId)(implicit r: Request[_], messages: Messages)
+@main("Le Val", Seq("starList")) {
 
-    <div><h1>Salon</h1></div>
-    <div id="starList">
-        <h1>Étoiles</h1>
-        <ul data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
-        </ul>
-        <div class="dropdown">
-            <a id="defyLink" >Défier</a>
-            <a id="pmLink" >Discuter</a>
-        </div>
+<div><h1>Salon</h1></div>
+<div id="starList" class="blueRoundBorder">
+    <h1>Étoiles</h1>
+    <ul data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
+    </ul>
+    <div class="dropdown">
+        <a id="defyLink" >Défier</a>
+        <a id="pmLink" >Discuter</a>
     </div>
+</div>
 
-    <div id="defyMenu">
-        Rule :
-        <select name="rule">
-            <option value="sinnlos">Sinnlos</option>
-            <option value="antares">Antarès</option>
-            <option value="helios">Helios</option>
-        </select><br/>
-        <input type ="radio" id="ostein"/> O'Stein <br/>
-        <input type ="radio" id="osteinMulligan"> Autoriser le mulligan <br/>
-        <input type ="radio" disabled />Nédémone <br/>
-        <input type ="radio" disabled />Janus <br/>
-        <button type ="submit">OK</button>
-    </div>
+@defyMenu(pid)
 
-    @scalajs.html.scripts(
-        "client",
-        routes.Assets.versioned(_).toString,
-        name => getClass.getResource(s"/public/$name") != null)
+@scalajs.html.scripts(
+"client",
+routes.Assets.versioned(_).toString,
+name => getClass.getResource(s"/public/$name") != null)
 
-    <script type="text/javascript">
-      leval.Front().starListInit(@id, "@name");
-    </script>
+<script type="text/javascript">
+      leval.Front().starListInit(@pid.uuid, "@pid.name");
+</script>
 }

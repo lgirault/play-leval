@@ -1,12 +1,13 @@
 
+@()(implicit messages: Messages)
 @main("Le Val") {
 
     <div id="welcomeBox">
         <img src="@routes.Assets.versioned("images/logoval.png")" alt="Logo du val">
-        <form id="loginForm" method="POST" action="@leval.controllers.routes.HomeController.postIndex">
-            Nom d'étoile :
+        <form id="loginForm" method="POST" action="@leval.controllers.routes.HomeController.connect">
+            @Messages("star_name")
             <input type="text" name="login">
-            <button type="submit">Jouer</button>
+            <button type="submit">@Messages("play")</button>
             <div id="errorBox"> </div>
         </form>
     </div>

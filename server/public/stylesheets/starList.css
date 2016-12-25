@@ -1,11 +1,21 @@
 #starList {
    float: right;
-   border: 1px solid blue;
-   border-radius: 25px;
    width: 10%;
+}
+.blueRoundBorder {
+ border: 1px solid blue;
+   border-radius: 25px;
 }
 #starList ul {
     text-align: left;
+}
+
+#defyMenu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
 }
 
 .dropbtn {
@@ -38,4 +48,3 @@
 
 .dropdown a:hover {background-color: #f1f1f1}
 
-.show {display:block;}

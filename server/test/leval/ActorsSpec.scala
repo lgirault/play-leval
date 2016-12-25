@@ -1,21 +1,20 @@
+package leval
+
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
-import org.scalatest.{BeforeAndAfterAll, FeatureSpecLike, OptionValues}
-import akka.util.Timeout
-import leval.{ConnectAck, GuestConnect, IdedMessage, Message}
-import leval.actors.{LoginActor, UserActor}
 import io.circe.generic.auto._
-import io.circe.parser._
 import io.circe.syntax._
+import leval.actors.{LoginActor, UserActor}
 import leval.core.PlayerId
+import org.scalatest.{BeforeAndAfterAll, FeatureSpecLike, OptionValues}
 
 import scala.collection.immutable.HashMap
 import scala.concurrent.duration._
 /**
   * Created by lorilan on 12/21/16.
   */
-class ActorsSpec extends TestKit(ActorSystem("ActorsSpec"))
+class ActorsSpec extends TestKit(ActorSystem("leval.ActorsSpec"))
   with FeatureSpecLike
   with BeforeAndAfterAll
   with OptionValues {
@@ -24,29 +23,6 @@ class ActorsSpec extends TestKit(ActorSystem("ActorsSpec"))
   override def afterAll {
     TestKit.shutdownActorSystem(system)
   }
-
-  //  scenario("ChildActor is expected to send SignalReady"){
-  //
-  //    val parent = TestProbe()
-  //
-  //    //    parent.childActorOf(Props[ChildActor])
-  //    //    parent expectMsg SignalReady
-  //
-  //    val actorRef = TestActorRef[ChildActor]( Props[ChildActor](), parent.ref, "main")
-  //
-  //    val t = actorRef.underlyingActor.t
-  //
-  //    parent.expectMsg((t + 1) seconds,  SignalReady)
-  //
-  //
-  //  }
-  //
-  //  scenario("MainActor is expected to send SignalReady eventually"){
-  //    val parent = TestProbe()
-  //    parent.childActorOf(MainActor(2))
-  //
-  //    parent.expectMsg(11 seconds,  SignalReady)
-  //  }
 
   scenario("on new connection login actor transmit join to other userActors "){
 
