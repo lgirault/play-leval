@@ -8,7 +8,7 @@ import org.scalajs.dom.{DOMList, FormData, XMLHttpRequest, html}
   */
 object Util {
 
-  implicit class DivOps(val div : html.Div) extends AnyVal {
+  implicit class DivOps(val div : html.Element) extends AnyVal {
     def show() : Unit = div.style.display = "block"
     def hide() : Unit = div.style.display = "none"
   }

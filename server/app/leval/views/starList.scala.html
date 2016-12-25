@@ -10,12 +10,14 @@
     <ul data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
     </ul>
     <div class="dropdown">
-        <a id="defyLink" >Défier</a>
+        <a id="challengeLink" >Défier</a>
         <a id="pmLink" >Discuter</a>
     </div>
 </div>
 
-@defyMenu(pid)
+@challengeMenu(pid)
+
+@challengedNotification()
 
 @scalajs.html.scripts(
 "client",

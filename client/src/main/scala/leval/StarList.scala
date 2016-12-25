@@ -5,40 +5,37 @@ package leval
   */
 import org.scalajs.dom._
 
-import scala.scalajs.js.annotation.JSExport
 import io.circe.generic.auto._
 import io.circe.parser._
-import io.circe.syntax._
 import leval.core.PlayerId
 import leval.Util._
 
 import scala.collection.immutable.HashMap
 
-
-trait StarList {
+object StarList {
 
   var users = HashMap.empty[Int, Element]
 
   val ul : Element = document.querySelector("#starList ul")
   val menu : html.Div = document.querySelector("#starList .dropdown").asInstanceOf[html.Div]
-  val defyForm : html.Form = document.getElementById("defyForm").asInstanceOf[html.Form]
+  val challengeForm : html.Form = document.getElementById("challengeForm").asInstanceOf[html.Form]
 
   var ws : WebSocket = _
 
   def showDefyMenu(pid : PlayerId) : Unit = {
-    val menu = document.getElementById("defyMenu").asInstanceOf[html.Div]
+    val menu = document.getElementById("challengeMenu").asInstanceOf[html.Div]
     menu.show()
-    document.getElementById("defiedName").textContent = pid.name
-    val defiedInput =
-      defyForm.querySelector("input[name=defiedId]").asInstanceOf[html.Input]
-    defiedInput.attributes.getNamedItem("value").value = pid.uuid.toString
+    document.getElementById("challengedName").textContent = pid.name
+    val challengedInput =
+      challengeForm.querySelector("input[name=challengedId]").asInstanceOf[html.Input]
+    challengedInput.attributes.getNamedItem("value").value = pid.uuid.toString
 
 
-    val button = defyForm.querySelector("button").asInstanceOf[html.Button]
+    val button = challengeForm.querySelector("button").asInstanceOf[html.Button]
 
     button.onclick = (me : MouseEvent) => {
       me.preventDefault()
-      Util.post(defyForm,
+      Util.post(challengeForm,
         onSuccess = xhr =>
           console.log(xhr.responseText),
 
@@ -49,7 +46,7 @@ trait StarList {
   }
 
   def updateMenu(pid : PlayerId, x : Double, y : Double) : Unit = {
-    val c1 = document.getElementById("defyLink").asInstanceOf[html.Link]
+    val c1 = document.getElementById("challengeLink").asInstanceOf[html.Link]
     c1.onclick = (me : MouseEvent) => {
       me.preventDefault()
       showDefyMenu(pid)
@@ -67,8 +64,10 @@ trait StarList {
 
   }
 
-  def processUserMsg(u : CSMessage) : Unit = u match {
-    case CSMessage(userId, Message.Join(userName)) =>
+
+
+  def processMsg(u : IdedMessage) : Unit = u match {
+    case IdedMessage(userId, Join(userName)) =>
       val pid = PlayerId(userId, userName)
       val li = document.createElement("li").asInstanceOf[html.LI]
       li.classList add "dropbtn"
@@ -91,17 +90,20 @@ trait StarList {
           }
       }
 
-    case CSMessage(userId, Message.Quit) =>
+    case IdedMessage(userId, Quit) =>
       users get userId foreach ul.removeChild
       users -= userId
+
+    case IdedMessage(_, GameDescription(owner, rules)) =>
+      ChallengedNotification.update(owner, rules)
   }
 
   val onMessageHandler : MessageEvent => Unit =
     event =>
       event.data match {
         case msg : String =>
-          decode[CSMessage](msg) match {
-            case Right(u) => processUserMsg(u)
+          decode[IdedMessage](msg) match {
+            case Right(u) => processMsg(u)
             case Left(err) =>
               console.info(msg + " received  : " + err.getMessage)
           }
@@ -109,19 +111,5 @@ trait StarList {
           console.info(d.getClass + " received")
 
       }
-
-  @JSExport
-  def starListInit(id : Int, name : String): Unit = {
-    ws = new WebSocket(ul.getAttribute("data-ws-url"))
-
-    ws.onmessage = onMessageHandler
-
-    ws.onopen = {
-      (_ : Event) =>
-        val msg = IdedMessage(id, Message.Join(name)).asJson.noSpaces
-        ws send msg
-    }
-
-  }
 
 }

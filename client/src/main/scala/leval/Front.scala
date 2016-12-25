@@ -4,11 +4,12 @@ import org.scalajs.dom._
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
+import io.circe.generic.auto._
+import io.circe.syntax._
 
+import StarList._
 
-
-
-object Front extends js.JSApp with StarList{
+object Front extends js.JSApp {
 
   def main(): Unit = ()
 
@@ -23,6 +24,21 @@ object Front extends js.JSApp with StarList{
         me.preventDefault()
         connect(loginForm)
     }
+  }
+
+
+  @JSExport
+  def starListInit(id : Int, name : String): Unit = {
+    ws = new WebSocket(ul.getAttribute("data-ws-url"))
+
+    ws.onmessage = onMessageHandler
+
+    ws.onopen = {
+      (_ : Event) =>
+        val msg = IdedMessage(id, Join(name)).asJson.noSpaces
+        ws send msg
+    }
+
   }
 
   def connect(form : html.Form) : Unit =

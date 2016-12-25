@@ -3,10 +3,10 @@
 
 @(pid: PlayerId)(implicit messages: Messages)
 
-<div id="defyMenu" class="blueRoundBorder">
-    <h1>Défier <span id="defiedName"/></h1>
+<div id="challengeMenu" class="blueRoundBorder centered">
+    <h1>Défier <span id="challengedName"/></h1>
 
-    <form id="defyForm" method="POST" action="@leval.controllers.routes.HomeController.defy">
+    <form id="challengeForm" method="POST" action="@leval.controllers.routes.HomeController.challenge">
         @Messages("rule") :
         <select name="rule">
             @for(cr <- leval.core.CoreRules.instances) {
@@ -14,12 +14,12 @@
             }
         </select> <br/>
         <input type ="checkbox" name="ostein" /> O'Stein <br/>
-        <input type ="checkbox" name="allowMulligan" />  @Messages("allow_mulligan") <br/>
+        <input type ="checkbox" name="allowMulligan" />  @Messages("allowed_mulligan") <br/>
         <!--
             <input type ="checkbox" name="nedemone" disabled />Nédémone <br/>
             <input type ="checkbox" name="janus" disabled />Janus <br/>
         -->
-        <input type="hidden" name="defiedId" value="-1">
+        <input type="hidden" name="challengedId" value="-1">
         <input type="hidden" name="playerId" value="@pid.uuid">
         <input type="hidden" name="playerName" value="@pid.name">
 

@@ -31,12 +31,12 @@ class LoginActor @Inject() extends Actor
         sender() ! ConnectAck(id)
       }
 
-    case Message.ListUserRequest =>
+    case ListUserRequest =>
       users foreach {
-        case (uId, (uLogin, _)) => sender() ! IdedMessage(uId, Message.Join(uLogin))
+        case (uId, (uLogin, _)) => sender() ! IdedMessage(uId, Join(uLogin))
       }
 
-    case msg @ IdedMessage(uId, Message.Join(uLogin)) =>
+    case msg @ IdedMessage(uId, Join(uLogin)) =>
       if(pending contains uLogin) {
         users foreach {
           case (_, (l, r)) =>
@@ -47,11 +47,21 @@ class LoginActor @Inject() extends Actor
         users += (uId -> (uLogin, sender()))
       }
 
-    case msg @ IdedMessage(name, Message.Quit) =>
+    case msg @ IdedMessage(name, Quit) =>
       users -= name
       users foreach {
         case (_, (_, r)) => r ! msg
       }
 
+    case msg @ IdedMessage(challenged, GameDescription(challenger, _)) =>
+      val map =
+        Map(
+          challenged -> users(challenged)._2,
+          challenger.uuid -> users(challenger.uuid)._2
+        )
+
+      val ca = context actorOf ChallengeActor(map)
+
+      ca ! msg
   }
 }

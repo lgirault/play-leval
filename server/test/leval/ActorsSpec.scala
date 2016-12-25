@@ -41,10 +41,10 @@ class ActorsSpec extends TestKit(ActorSystem("leval.ActorsSpec"))
     loginActorRef.!(GuestConnect("toto"))(testActor)
     this.expectMsg(ConnectAck(PlayerId(4, "toto")))
 
-    loginActorRef ! IdedMessage(4, Message.Join("toto"))
+    loginActorRef ! IdedMessage(4, Join("toto"))
 
     existingUsersProbes.foreach {
-      _ expectMsg IdedMessage(4, Message.Join("toto"))
+      _ expectMsg IdedMessage(4, Join("toto"))
     }
 
   }
@@ -55,13 +55,13 @@ class ActorsSpec extends TestKit(ActorSystem("leval.ActorsSpec"))
     val outProbe = TestProbe()
     val userActorRef = TestActorRef[UserActor]( UserActor(loginActorProbe.ref, outProbe.ref))
 
-    loginActorProbe expectMsg Message.ListUserRequest
+    loginActorProbe expectMsg ListUserRequest
 
     //userActorRef.underlyingActor.context become userActorRef.underlyingActor.state(numSignalExpectedBeforeAnswering)
 
-    userActorRef ! IdedMessage(0, Message.Join("toto"))
+    userActorRef ! IdedMessage(0, Join("toto"))
     loginActorProbe.expectNoMsg()
-    outProbe.expectMsg(100 millis, IdedMessage(0, Message.Join("toto")).asJson.noSpaces)
+    outProbe.expectMsg(100 millis, IdedMessage(0, Join("toto")).asJson.noSpaces)
 
   }
   scenario("user actor transmits non-json messages encoded in json to out"){
@@ -70,10 +70,10 @@ class ActorsSpec extends TestKit(ActorSystem("leval.ActorsSpec"))
     val outProbe = TestProbe()
     val userActorRef = TestActorRef[UserActor]( UserActor(loginActorProbe.ref, outProbe.ref))
 
-    loginActorProbe expectMsg Message.ListUserRequest
+    loginActorProbe expectMsg ListUserRequest
 
-    userActorRef ! IdedMessage(0, Message.Join("toto")).asJson.noSpaces
-    loginActorProbe.expectMsg(100 millis, IdedMessage(0, Message.Join("toto")))
+    userActorRef ! IdedMessage(0, Join("toto")).asJson.noSpaces
+    loginActorProbe.expectMsg(100 millis, IdedMessage(0, Join("toto")))
     outProbe.expectNoMsg()
   }
 }

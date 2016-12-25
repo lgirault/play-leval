@@ -1,0 +1,14 @@
+
+@()(implicit messages : Messages)
+
+<div id="challengedNotification" class="blueRoundBorder centered">
+    <h1>@Messages("challenged_by") <span id="challengerName"/></h1>
+
+    <ul>
+        <li id="coreRules"></li>
+        <li id="ostein">O'Stein</li>
+        <li id="allowMulligan">@Messages("allowed_mulligan")</li>
+    </ul>
+    <button id="challenged_accepted">@Messages("accept")</button>
+    <button id="challenged_denied">@Messages("decline")</button>
+</div>

@@ -9,7 +9,7 @@ import play.api.data.format.Formatter
 /**
   * Created by lorilan on 12/25/16.
   */
-object DefyForm {
+object ChallengeForm {
 
   implicit val coreRulesFormatter : Formatter[CoreRules] =
     new Formatter[CoreRules] {
@@ -47,21 +47,21 @@ object DefyForm {
 
 
   def wrap
-  ( cr : CoreRules,
-    ostein : Boolean,   allowMulligan : Boolean,
-    nedemone : Boolean, janus : Boolean,
-    defiedId : Int,
-    playerId : Int, playerName : String) : IdedMessage =
-    IdedMessage(defiedId,
+  (cr : CoreRules,
+   ostein : Boolean, allowMulligan : Boolean,
+   nedemone : Boolean, janus : Boolean,
+   challengedId : Int,
+   playerId : Int, playerName : String) : IdedMessage =
+    IdedMessage(challengedId,
       GameDescription(PlayerId(playerId, playerName),
         Rules(cr, ostein, allowMulligan, nedemone, janus)))
 
   def unwrap(msg : IdedMessage) = msg match {
-    case IdedMessage(defiedId,
+    case IdedMessage(challengedId,
     GameDescription(PlayerId(playerId, playerName),
     Rules(cr, ostein, allowMulligan, nedemone, janus))) =>
       Some((cr, ostein, allowMulligan, nedemone, janus,
-        defiedId, playerId, playerName))
+        challengedId, playerId, playerName))
     case _ => None
   }
 
@@ -73,7 +73,7 @@ object DefyForm {
       "allowMulligan" -> of[Boolean],
       "nedemone" -> of[Boolean],
       "janus" -> of[Boolean],
-      "defiedId" -> number,
+      "challengedId" -> number,
       "playerId" -> number,
       "playerName" -> text
     )(wrap)(unwrap)

@@ -9,12 +9,10 @@ import akka.pattern.ask
 import akka.util.Timeout
 import leval._
 import leval.actors.UserActor
-import leval.core.{CoreRules, PlayerId, Rules}
-import play.api.data.{Form, FormError, Mapping}
+import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.{Action, Controller, WebSocket}
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -62,10 +60,12 @@ class HomeController @Inject()
         }
     }
 
-  def defy = Action(parse.form(DefyForm.instance,
+  def challenge = Action(parse.form(ChallengeForm.instance,
     onErrors = (formErrors: Form[IdedMessage]) => BadRequest(s"error : $formErrors") )) { implicit request =>
-    Logger.info(request.body.toString)
-    Ok(request.body.toString)
+
+    loginActor ! request.body
+
+    Ok
   }
 
 
