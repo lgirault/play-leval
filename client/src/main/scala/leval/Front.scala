@@ -26,6 +26,11 @@ object Front extends js.JSApp {
     }
   }
 
+  private var ws : WebSocket = _
+
+  def send(msg : Message) : Unit= {
+    ws send msg.asJson.noSpaces
+  }
 
   @JSExport
   def starListInit(id : Int, name : String): Unit = {
@@ -35,8 +40,7 @@ object Front extends js.JSApp {
 
     ws.onopen = {
       (_ : Event) =>
-        val msg = IdedMessage(id, Join(name)).asJson.noSpaces
-        ws send msg
+        send( IdedMessage(id, Join(name)) )
     }
 
   }

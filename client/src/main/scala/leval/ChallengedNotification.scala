@@ -8,10 +8,30 @@ import Util.DivOps
   */
 object ChallengedNotification {
 
+  lazy val wrapper : html.Div = (document getElementById "challengedNotification").asInstanceOf[html.Div]
+
+  def init(): Unit ={
+    val challengeAccepted =
+      (wrapper querySelector "#challenge_accepted").asInstanceOf[html.Button]
+
+    challengeAccepted.onclick = (me : MouseEvent) => {
+      me.preventDefault()
+      Front send ChallengeAccepted
+    }
+
+    val challengeDenied =
+      (wrapper querySelector "#challenge_denied").asInstanceOf[html.Button]
+
+    challengeDenied.onclick = (me : MouseEvent) => {
+      me.preventDefault()
+      Front send ChallengeDenied("Denied by user")
+    }
+
+  }
+
   def update(challenger : PlayerId,
              rules : Rules) : Unit = {
 
-    val elt = (document getElementById "challengedNotification").asInstanceOf[html.Div]
 
     val nameWraper = (document getElementById "challengerName").asInstanceOf[html.Span]
     val coreRules = (document getElementById "coreRules").asInstanceOf[html.LI]
@@ -28,6 +48,6 @@ object ChallengedNotification {
     else allowMulligan.hide()
 
 
-    elt.show()
+    wrapper.show()
   }
 }

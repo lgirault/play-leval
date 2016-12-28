@@ -2,9 +2,8 @@ package leval
 
 import leval.core.{PlayerId, Rules}
 
-case class IdedMessage(user : Int, content : Message)
-
 sealed abstract class Message
+case class IdedMessage(user : Int, content : Message) extends Message
 
 sealed abstract class ConnectRequestMessage extends Message
 sealed abstract class ConnectAnswerMessage extends Message
@@ -22,8 +21,9 @@ case class GameDescription
 (owner : PlayerId,
  rules : Rules) extends Message
 
-case object ChallengeAccepted extends Message
-case class ChallengeDenied(reason : String) extends Message
+sealed abstract class ChallengeAnswer extends Message
+case object ChallengeAccepted extends ChallengeAnswer
+case class ChallengeDenied(reason : String) extends ChallengeAnswer
 
 case class Join(login : String) extends Message
 case object Quit extends Message

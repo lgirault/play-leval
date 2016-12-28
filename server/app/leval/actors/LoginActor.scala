@@ -53,14 +53,14 @@ class LoginActor @Inject() extends Actor
         case (_, (_, r)) => r ! msg
       }
 
-    case msg @ IdedMessage(challenged, GameDescription(challenger, _)) =>
+    case msg @ IdedMessage(challenged, GameDescription(challenger, rules)) =>
       val map =
         Map(
           challenged -> users(challenged)._2,
           challenger.uuid -> users(challenger.uuid)._2
         )
 
-      val ca = context actorOf ChallengeActor(map)
+      val ca = context actorOf ChallengeActor(map, rules)
 
       ca ! msg
   }

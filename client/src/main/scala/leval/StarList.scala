@@ -17,39 +17,14 @@ object StarList {
   var users = HashMap.empty[Int, Element]
 
   val ul : Element = document.querySelector("#starList ul")
+
   val menu : html.Div = document.querySelector("#starList .dropdown").asInstanceOf[html.Div]
-  val challengeForm : html.Form = document.getElementById("challengeForm").asInstanceOf[html.Form]
-
-  var ws : WebSocket = _
-
-  def showDefyMenu(pid : PlayerId) : Unit = {
-    val menu = document.getElementById("challengeMenu").asInstanceOf[html.Div]
-    menu.show()
-    document.getElementById("challengedName").textContent = pid.name
-    val challengedInput =
-      challengeForm.querySelector("input[name=challengedId]").asInstanceOf[html.Input]
-    challengedInput.attributes.getNamedItem("value").value = pid.uuid.toString
-
-
-    val button = challengeForm.querySelector("button").asInstanceOf[html.Button]
-
-    button.onclick = (me : MouseEvent) => {
-      me.preventDefault()
-      Util.post(challengeForm,
-        onSuccess = xhr =>
-          console.log(xhr.responseText),
-
-        onFailure = xhr => ())
-
-    }
-
-  }
 
   def updateMenu(pid : PlayerId, x : Double, y : Double) : Unit = {
     val c1 = document.getElementById("challengeLink").asInstanceOf[html.Link]
     c1.onclick = (me : MouseEvent) => {
       me.preventDefault()
-      showDefyMenu(pid)
+      ChallengePanel.display(pid)
     }
 
     val c2 = document.getElementById("pmLink").asInstanceOf[html.Link]
@@ -65,8 +40,7 @@ object StarList {
   }
 
 
-
-  def processMsg(u : IdedMessage) : Unit = u match {
+  def processMsg(u : Message) : Unit = u match {
     case IdedMessage(userId, Join(userName)) =>
       val pid = PlayerId(userId, userName)
       val li = document.createElement("li").asInstanceOf[html.LI]
@@ -94,7 +68,7 @@ object StarList {
       users get userId foreach ul.removeChild
       users -= userId
 
-    case IdedMessage(_, GameDescription(owner, rules)) =>
+    case GameDescription(owner, rules) =>
       ChallengedNotification.update(owner, rules)
   }
 
@@ -102,7 +76,7 @@ object StarList {
     event =>
       event.data match {
         case msg : String =>
-          decode[IdedMessage](msg) match {
+          decode[Message](msg) match {
             case Right(u) => processMsg(u)
             case Left(err) =>
               console.info(msg + " received  : " + err.getMessage)

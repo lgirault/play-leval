@@ -27,9 +27,25 @@ class UserActor
 
   var challengeActor : Option[ActorRef] = None
 
+  //we know it's from user since it was received as Json
+  def handleMsgFromUser(msg : Message) : Unit =
+    msg match {
+      case IdedMessage(id, Join(login)) =>
+        thisId = Some(PlayerId(id, login))
+        loginActor ! msg
+
+      case cd @ ChallengeDenied(_) =>
+        challengeActor foreach (_ ! cd)
+        challengeActor = None
+
+      case ChallengeAccepted =>
+        challengeActor foreach (_ ! msg)
+
+      case _ => Logger debug s"$msg received"
+    }
 
   def receive: Receive = {
-    case msg @ IdedMessage(_, GameDescription(_,_)) => //from ChallengeActor
+    case msg @ GameDescription(_,_) => //from ChallengeActor
       challengeActor match {
         case Some(_) =>
           sender() ! ChallengeDenied("already challenged")
@@ -42,14 +58,8 @@ class UserActor
       out ! msg.asJson.noSpaces
 
     case str : String =>
-      decode[IdedMessage](str) match {
-        case Right(msg @ IdedMessage(id, Join(login))) =>
-          Logger.info(s"receiving $msg as json")
-          thisId = Some(PlayerId(id, login))
-          loginActor ! msg
-
-        case Right(IdedMessage(login, status)) =>
-          println(s"user $status received")
+      decode[Message](str) match {
+        case Right(msg) => handleMsgFromUser(msg)
         case Left(_) => ()
       }
 
