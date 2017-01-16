@@ -20,7 +20,7 @@ object Target {
         }
 
       val tgts = Source +: (for {
-        s <- Suit.list
+        s <- Suit.values
       } yield TargetBeingResource(s, game.stars.indices))
 
       if(riverAvailable) DeathRiver +: tgts

@@ -1,13 +1,16 @@
 package leval
 
 import org.scalajs.dom._
+import com.thoughtworks.binding.dom
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import io.circe.generic.auto._
 import io.circe.syntax._
-
 import StarList._
+import leval.core.User
+import leval.gameScreen.GameScreen
+
 
 object Front extends js.JSApp {
 
@@ -32,6 +35,8 @@ object Front extends js.JSApp {
     ws send msg.asJson.noSpaces
   }
 
+  var self : User = User(1337, "titi")
+
   @JSExport
   def starListInit(id : Int, name : String): Unit = {
     ws = new WebSocket(ul.getAttribute("data-ws-url"))
@@ -43,6 +48,7 @@ object Front extends js.JSApp {
         send( IdedMessage(id, Join(name)) )
     }
 
+    self = User(id, name)
   }
 
   def connect(form : html.Form) : Unit =
@@ -52,4 +58,12 @@ object Front extends js.JSApp {
         val div = document.getElementById("errorBox").asInstanceOf[html.Div]
         div.textContent = xhr.responseText
       })
+
+
+
+  @JSExport
+  def test() : Unit = {
+
+    GameScreen.init()
+  }
 }

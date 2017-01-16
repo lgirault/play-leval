@@ -1,60 +1,81 @@
 package leval.core
 
+import leval.{GameInit, OSteinGameInit, RegularGameInit}
+
 /**
   * Created by lorilan on 9/2/16.
   */
-case class GameInit
-(twilight: Twilight,
- stars : Seq[Star], // for 4 or 3 players ??
- source : Deck,
- rules : Rules) extends Serializable {
-
-  def game : Game = {
-    val g = Game(rules.coreRules, stars, source)
-    if(rules.ostein)
-      g.copy(
-        currentStarIdx = -1,
-        currentPhase = InfluencePhase(-1))
-    else g
-
-  }
-
-
-  def doTwilight : GameInit = {
-    //tant qu'on a pas deux cartes égales, on continue de piocher (le val 1, p 20)
-    val (d, Seq(h1, h2)) = GameInit.doTwilight(source)
-
-    val Seq(s01, s02) = stars
-    val (s1, s2) = (s01 ++ h1, s02 ++ h2)
-
-    if(Card.value(h1.head) > Card.value(h2.head))
-      copy(Twilight(Seq(h1, h2)), stars = Seq(s1, s2), source = d)
-    else
-      copy(Twilight(Seq(h2, h1)), stars = Seq(s2, s1), source = d)
-  }
-}
 
 object GameInit {
 
-  def apply(players : Seq[PlayerId], rule : Rules) : GameInit = players match {
+  def apply(players : Seq[User], rule : Rules) : (Seq[GameInit], Game) =
+    players match {
     case p1 +: p2 +: Nil => this.apply(p1, p2, rule)
     case _ => leval.error("two players only")
   }
-  def apply(pid1 : PlayerId, pid2 : PlayerId, rules : Rules) : GameInit = {
-    val deck = deck54()
 
-    import rules.{coreRules => crules}
-    // on pioche 9 carte
-    val (d2, hand1) = deck.pick(9)
-    val (d3, hand2) = d2.pick(9)
+  def apply(pid1 : User, pid2 : User, rules : Rules) : (Seq[GameInit], Game) =
+    if(rules.ostein) {
+      val (gi, g) = ostein(pid1, pid2, rules)
+      (Seq(gi, gi), g)
+    }
+    else if (rules.allowMulligan)
+      regular(pid1, pid2, rules)
+    else
+      gameWithoutMulligan(pid1, pid2, rules)
 
-    new GameInit(Twilight(Seq()),
-      Seq(Star(pid1, crules.startingMajesty, hand1),
-        Star(pid2, crules.startingMajesty, hand2)),
-      d3, rules)
+  def ostein(pid1 : User, pid2 : User, rules : Rules) : (OSteinGameInit, Game) = {
+    import rules.coreRules.{startingMajesty => majesty}
+
+    val (Seq(hand1, hand2), d3) = hands
+
+    val stars =
+      Seq(Star(pid1, majesty),
+        Star(pid2, majesty))
+    val gi = OSteinGameInit(Seq(pid1, pid2), Seq(hand1, hand2), rules)
+
+    (gi, Game(rules.coreRules, stars, d3))
   }
 
+  def hands : (Seq[Seq[Card]],  Deck) = {
+    val deck = deck54()
+    val (d2, hand1) = deck pick 9
+    val (d3, hand2) = d2 pick 9
+    (Seq(hand1, hand2), d3)
+  }
 
+  def gameWithoutMulligan(pid1 : User, pid2 : User, rules: Rules) : (Seq[RegularGameInit], Game) = {
+    val res @ (_, g) = regular(pid1, pid2, rules)
+    if(mulligan(g)) gameWithoutMulligan(pid1, pid2, rules)
+    else res
+  }
+
+  def regular(pid1 : User, pid2 : User, rules : Rules) : (Seq[RegularGameInit], Game) = {
+    val (Seq(h1, h2), d3) = hands
+    val (d4, t) = doTwilight(d3)
+    val Twilight(Seq(t1, t2)) = t
+
+    val hand1 = h1 ++ t1
+    val hand2 = h2 ++ t2
+
+    import rules.coreRules.{startingMajesty => majesty}
+    val stars =
+      Seq(Star(pid1, majesty, hand1),
+        Star(pid2, majesty, hand2))
+
+    val players = Seq(pid1, pid2)
+    val gi1 = RegularGameInit(t, players, hand1, rules)
+    val gi2 = RegularGameInit(t, players, hand2, rules)
+    val firstPlayer =
+      if(Card.value(t1.head) > Card.value(t2.head)) 0
+      else 1
+
+    (Seq(gi1, gi2),
+      Game(rules.coreRules, stars, d4, firstPlayer))
+  }
+
+  def mulligan(g : Game) : Boolean =
+    g.stars.exists (s => ! hasFace(s.hand))
 
   def hasFace(h : Set[Card]) =
     h.exists {
@@ -62,17 +83,8 @@ object GameInit {
       case Card(King|Queen|Jack, _) => true
       case _ => false
     }
-  def mulligan(g : Game) : Boolean =
-    g.stars.exists (s => ! hasFace(s.hand))
 
-
-  def gameWithoutMulligan(players : Seq[PlayerId], rules: Rules) : GameInit = {
-    val gi = GameInit(players, rules).doTwilight
-    if(mulligan(gi.game)) gameWithoutMulligan(players, rules)
-    else gi
-  }
-
-  def doTwilight(source : Seq[Card]) : (Seq[Card], Seq[Seq[Card]]) = {
+  def doTwilight(source : Seq[Card]) : (Seq[Card], Twilight) = {
     var d = source
     var h1 = Seq(d.head)
     d = d.tail
@@ -87,6 +99,7 @@ object GameInit {
 
       case Nil | Seq(_) => leval.error()
     }
-    (d, Seq(h1, h2))
+    (d, Twilight(Seq(h1, h2)))
   }
+
 }

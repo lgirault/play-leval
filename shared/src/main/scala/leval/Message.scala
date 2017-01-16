@@ -1,6 +1,6 @@
 package leval
 
-import leval.core.{PlayerId, Rules}
+import leval.core.{Card, User, Rules, Twilight}
 
 sealed abstract class Message
 case class IdedMessage(user : Int, content : Message) extends Message
@@ -14,11 +14,11 @@ case class Connect
 ( login : String,
   password : String)
   extends Message
-case class ConnectAck(id : PlayerId) extends ConnectAnswerMessage
+case class ConnectAck(id : User) extends ConnectAnswerMessage
 case class ConnectNack(msg : String) extends ConnectAnswerMessage
 
 case class GameDescription
-(owner : PlayerId,
+(owner : User,
  rules : Rules) extends Message
 
 sealed abstract class ChallengeAnswer extends Message
@@ -28,5 +28,20 @@ case class ChallengeDenied(reason : String) extends ChallengeAnswer
 case class Join(login : String) extends Message
 case object Quit extends Message
 case object ListUserRequest extends Message
+
+//game messages
+sealed abstract class GameMessage extends Message
+
+sealed abstract class GameInit extends GameMessage
+case class RegularGameInit
+(twilight: Twilight,
+ stars : Seq[User],
+ hand : Seq[Card],
+ rules : Rules) extends GameInit
+
+case class OSteinGameInit
+(stars : Seq[User],
+ hands : Seq[Seq[Card]],
+ rules : Rules) extends GameInit
 
 

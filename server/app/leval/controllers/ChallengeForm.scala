@@ -1,7 +1,7 @@
 package leval.controllers
 
 import leval.{GameDescription, IdedMessage}
-import leval.core.{CoreRules, PlayerId, Rules}
+import leval.core.{CoreRules, User, Rules}
 import play.api.data.{Form, FormError}
 import play.api.data.Forms._
 import play.api.data.format.Formatter
@@ -53,12 +53,12 @@ object ChallengeForm {
    challengedId : Int,
    playerId : Int, playerName : String) : IdedMessage =
     IdedMessage(challengedId,
-      GameDescription(PlayerId(playerId, playerName),
+      GameDescription(User(playerId, playerName),
         Rules(cr, ostein, allowMulligan, nedemone, janus)))
 
   def unwrap(msg : IdedMessage) = msg match {
     case IdedMessage(challengedId,
-    GameDescription(PlayerId(playerId, playerName),
+    GameDescription(User(playerId, playerName),
     Rules(cr, ostein, allowMulligan, nedemone, janus))) =>
       Some((cr, ostein, allowMulligan, nedemone, janus,
         challengedId, playerId, playerName))

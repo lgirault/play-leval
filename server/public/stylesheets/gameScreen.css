@@ -1,0 +1,174 @@
+#gameScreen {
+    display: none;
+    width: 100%;
+    flex: 1 0 auto;
+    display : flex;
+    flex-flow: column;
+}
+
+.side {
+    display:flex;
+    flex: 1 0 auto;
+}
+.leftColumn {
+    width:10%;
+    display: flex;
+    flex-flow: column;
+    text-align: center;
+}
+.playArea {
+    flex: 1 0 auto;
+    display: flex;
+    flex-flow: column;
+}
+
+#centerLine{
+    display: flex;
+}
+#deathRiver {
+    flex: 1 0 auto;
+    background-color : gold;
+}
+
+
+#gameStatus {
+    height: 30%;
+    display : flex;
+    align-items: center;
+    justify-content: center;
+}
+#leftColumnPadding{
+    height: 30%;
+}
+.scorePane {
+    height: 70%;
+    display : flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.playArea {
+    display: flex;
+    flex-flow: column;
+}
+.handArea {
+    background-color: pink;
+    
+    display: flex;
+    justify-content: center;
+}
+.handWrapper{
+    display: flex;
+}
+#playerHand{
+    align-items: flex-end;
+    display: flex;
+    height: 100px;
+}
+
+.beingsArea {
+    background-color:green;
+    flex: 1 0 auto;
+}
+
+//card size = 104 * 151 {}
+#createBeingPane {
+    border-radius: 15px;
+    padding : 2px;
+    display: none;
+    border: solid black 1px;
+    background-color : #e8e6c0;
+}
+#createBeingPane h1 {
+    margin: 2px;
+    font-size : 1.5em;
+    text-align : center;
+}
+
+.beingPane {
+    margin: 2px;
+    display: flex;
+    flex-flow: column;
+}
+.beingPane div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#dictionary{
+    display: none;
+}
+
+.card{
+    width : 104px;
+    height: 151px;
+}
+
+.cardBox {
+    height: 151px;
+    width: 104px;
+    border: solid black 1px;
+}
+
+
+.half {
+   height: 75px;
+   overflow: hidden;
+}
+
+.handPlayableCard {
+    //position: absolute;
+}
+.cutHalf {
+   height: 75px;
+   width : 60px;
+   overflow: hidden;
+}
+.bottom img {
+    margin : -75px 0px 0px 0px;
+}
+
+.handPlayableCard:hover {
+    width :104px;
+    height :100px;
+}
+
+.handPlayableCard img{
+}
+
+.cardMenu {
+    width :104px;
+    height :100px;
+    position:absolute;
+    display : flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+img.cardMenuIcon {
+    width : 27px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 5px;
+    border: solid black 1px;
+}
+
+img.cardMenuIcon.enabled {
+    background-color:yellow;
+}
+img.cardMenuIcon.enabled:hover {
+    background-color:gold;
+}
+
+img.cardMenuIcon.disabled {
+    background-color:gray;
+}
+
+img.cardMenuIcon.disabled:hover,
+img.cardMenuIcon.disabled:focus {
+//  text-decoration: none;
+    cursor: not-allowed;
+}

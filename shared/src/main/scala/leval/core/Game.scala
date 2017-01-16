@@ -7,6 +7,7 @@ import Game.{SeqOps, StarIdx, goesToRiver}
 
 object Game {
   type StarIdx = Int
+
   implicit class SeqOps[T](val s : Seq[T]) extends AnyVal {
     def set(idx : Int, newVal : T) : Seq[T] = {
       val (s0, _ +: s1) = s.splitAt(idx)
@@ -24,6 +25,13 @@ object Game {
     case Card((Jack | Queen | King), Diamond) => false
     case _ => true
   }
+  def apply(rules : CoreRules,
+            stars : Seq[Star], // for 4 or 3 players ??
+            source : Deck,
+            firstPlayerIdx : StarIdx) : Game =
+    Game(rules, stars, source,
+      currentStarIdx = firstPlayerIdx,
+      currentPhase = InfluencePhase(firstPlayerIdx))
 }
 
 case class Game
@@ -41,12 +49,12 @@ case class Game
 ) {
 
 
-  def nextPlayer = (currentStarIdx + 1) % stars.length
-  def currentStar = stars(currentStarIdx)
+  def nextPlayer : Int = (currentStarIdx + 1) % stars.length
+  def currentStar : Star = stars(currentStarIdx)
 
-  def ended = rules.ended(this)
+  def ended : Boolean = rules.ended(this)
 
-  def result = rules.result(this)
+  def result : Option[(User, User)] = rules.result(this)
 
 
   def nextPhase : Phase = currentPhase match {

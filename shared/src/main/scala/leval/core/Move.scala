@@ -42,11 +42,12 @@ case class ActivateBeing(card : Card ) extends Move[Unit]
 
 
 case class Collect(origin: Origin, target: CollectTarget) extends Move[Card]
+
 //look card is a club effect and only the user see the card
-//reveal a card is an after effect of using a being resource
-//both player can see the card until the sourcePhase
-case class Reveal(target : Card, resource : Suit) extends Move[Boolean]
 case class LookCard(origin: CardOrigin, target : Card, resource : Suit) extends Move[Boolean]
+//reveal a card is an after effect of using a being resource
+case class Reveal(target : Card, resource : Suit) extends Move[Boolean]
+//both player can see the card until the sourcePhase
 
 case class PlaceBeing(being: Being, side : StarIdx) extends Move[Option[Card]]
 case class Bury(target : Card, order : List[Card]) extends Move[Unit]

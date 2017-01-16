@@ -206,7 +206,7 @@ sealed trait CoreRules {
 
   //default = 2 players
   //winner, loser
-  def result(g : Game) : Option[(PlayerId, PlayerId)] =
+  def result(g : Game) : Option[(User, User)] =
   if(g.source.isEmpty) None
   else {
     val someWinner = g.stars.zipWithIndex.find {
@@ -280,7 +280,7 @@ sealed trait CoreRules {
                     c : Card, pos : Suit) : Boolean =
     validResource(sFace getOrElse C(-1, Numeric(5), Heart),
       otherResources, c, pos)
-  //restrictive default : using King or Queen could authorize lovers or "hommes lige"
+  //vanilla default : using King or Queen could authorize lovers or "hommes lige"
   //using a Joker could forbid the other
 
 

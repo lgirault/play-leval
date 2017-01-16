@@ -7,7 +7,7 @@ import org.scalajs.dom._
 
 import io.circe.generic.auto._
 import io.circe.parser._
-import leval.core.PlayerId
+import leval.core.User
 import leval.Util._
 
 import scala.collection.immutable.HashMap
@@ -20,7 +20,7 @@ object StarList {
 
   val menu : html.Div = document.querySelector("#starList .dropdown").asInstanceOf[html.Div]
 
-  def updateMenu(pid : PlayerId, x : Double, y : Double) : Unit = {
+  def updateMenu(pid : User, x : Double, y : Double) : Unit = {
     val c1 = document.getElementById("challengeLink").asInstanceOf[html.Link]
     c1.onclick = (me : MouseEvent) => {
       me.preventDefault()
@@ -42,7 +42,7 @@ object StarList {
 
   def processMsg(u : Message) : Unit = u match {
     case IdedMessage(userId, Join(userName)) =>
-      val pid = PlayerId(userId, userName)
+      val pid = User(userId, userName)
       val li = document.createElement("li").asInstanceOf[html.LI]
       li.classList add "dropbtn"
       li.textContent = userName

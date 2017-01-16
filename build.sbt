@@ -73,7 +73,11 @@ lazy val client = (project in file("client")).
     //libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
   libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.1" % Test,
 
-  jsDependencies += RuntimeDOM % Test
+  jsDependencies += RuntimeDOM % Test,
+
+  libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "latest.release",
+
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 ).enablePlugins(ScalaJSPlugin, ScalaJSWeb).
   dependsOn(sharedJs)

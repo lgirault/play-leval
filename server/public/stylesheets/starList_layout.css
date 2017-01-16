@@ -1,0 +1,112 @@
+html, body {
+  width : 100%;
+  height : 100%;
+}
+body {
+  margin:2px;
+  padding : 0px;
+  margin : 0px;
+  border : 0px;
+}
+#left_wrapper {
+    height : 100%;
+    display: flex;
+    /* flex-wrap: wrap; */
+    flex-flow: column;
+    /* align-content: flex-start; */
+    /* align-items: center; */
+    /* margin: 0px; */
+}
+
+#challengePanel {
+    display: none;
+}
+
+#challengedNotification {
+    display: none;
+}
+
+#starList {
+    width:20%;
+    float:right;
+    /* display: none; */
+}
+
+#starList ul {
+    text-align: left;
+}
+
+#nav_wrapper {
+  /* overflow:hidden; */
+  width: 100%;
+  flex: 0 0 68px;
+  /* align-self: flex-start; */
+}
+
+.tabContent {
+  /* flex-basis: 15%; */
+  /* justify-content: center; */
+}
+
+.nav {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+.nav > li {
+  position: relative;
+  display: table-cell;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+a {
+  background-color: transparent;
+}
+
+.nav > li > a {
+  display: block;
+  padding: 10px 15px;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+  text-decoration: none;
+  background-color: #eee;
+}
+.nav > li.disabled > a {
+  color: #777;
+}
+.nav > li.disabled > a:hover,
+.nav > li.disabled > a:focus {
+  color: #777;
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+}
+.nav-tabs > li {
+  transform: translate(0, 1px);
+} 
+
+.nav-tabs > li > a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li > a:hover {
+  border-color: #eee #eee #ddd;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}

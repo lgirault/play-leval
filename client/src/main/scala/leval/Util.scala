@@ -1,16 +1,22 @@
 package leval
 
-import org.scalajs.dom._
-import org.scalajs.dom.{DOMList, FormData, XMLHttpRequest, html}
+import org.scalajs.dom.raw.MouseEvent
+import org.scalajs.dom.{DOMList, Event, FormData, XMLHttpRequest}
+import org.scalajs.dom.html._
 
 /**
   * Created by lorilan on 12/22/16.
   */
 object Util {
 
-  implicit class DivOps(val div : html.Element) extends AnyVal {
-    def show() : Unit = div.style.display = "block"
-    def hide() : Unit = div.style.display = "none"
+  type MouseEventHandler = MouseEvent => Unit
+
+  implicit class ElementOps(val elt : Element) extends AnyVal {
+    def show() : Unit = elt.style.display = "block"
+    def showFlex() : Unit = elt.style.display = "flex"
+    def hide() : Unit = elt.style.display = "none"
+    def delete() : Unit =
+      elt.parentNode removeChild elt
   }
 
 
@@ -45,7 +51,7 @@ object Util {
 
 
   def post
-  (form : html.Form,
+  (form : Form,
    onSuccess : XMLHttpRequest => Unit,
    onFailure : XMLHttpRequest => Unit ) : Unit = {
     val formData = new FormData(form)
@@ -59,7 +65,7 @@ object Util {
           else onFailure(xhr)
         }
       }
-    console.info(formData.toString)
+    //console.info(formData.toString)
     xhr.send(formData)
   }
 }

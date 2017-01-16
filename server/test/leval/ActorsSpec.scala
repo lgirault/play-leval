@@ -6,7 +6,7 @@ import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import leval.actors.{LoginActor, UserActor}
-import leval.core.PlayerId
+import leval.core.User
 import org.scalatest.{BeforeAndAfterAll, FeatureSpecLike, OptionValues}
 
 import scala.collection.immutable.HashMap
@@ -39,7 +39,7 @@ class ActorsSpec extends TestKit(ActorSystem("leval.ActorsSpec"))
     loginActorRef.underlyingActor.users = existingUsers
 
     loginActorRef.!(GuestConnect("toto"))(testActor)
-    this.expectMsg(ConnectAck(PlayerId(4, "toto")))
+    this.expectMsg(ConnectAck(User(4, "toto")))
 
     loginActorRef ! IdedMessage(4, Join("toto"))
 

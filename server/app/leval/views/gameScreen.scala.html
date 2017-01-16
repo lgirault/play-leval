@@ -1,0 +1,52 @@
+
+@import leval.Ids
+
+@()(implicit messages: Messages)
+<div id="gameScreen" class="tabContent">
+    <div class="side">
+        <div class="leftColumn">
+            <div id="@Ids.gameStatus"></div>
+            <div id="@Ids.opponentScore" class="scorePane"></div>
+        </div>
+        <div class="playArea">
+            <div class="handArea">
+                <div id="@Ids.opponentHand" class="handWrapper"></div>
+            </div>
+            <div id="opponentBeings" class="beingsArea"></div>
+        </div>
+    </div>
+    <div id="centerLine">
+        <div id="source">
+            <img alt="Source" src="@routes.Assets.versioned("images/cards/back.png")" class="card" />
+        </div>
+        <div id="deathRiver"></div>
+    </div>
+    <div class="side">
+        <div class="leftColumn">
+            <div id="@Ids.playerScore" class="scorePane"></div>
+            <div id="leftColumnPadding"></div>
+        </div>
+        <div class="playArea">
+            <div id="playerBeings" class="beingsArea"></div>
+            <div class="handArea">
+                <div id="@Ids.playerHand" class="handWrapper"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="createBeingPane" class="centered">
+    <h1 class="messages" msgId="@Ids.createBeing">_</h1>
+    <div id="@Ids.tmpBeingWrapper"></div>
+</div>
+<div id="dictionary">
+    <!-- server generated ressources used by client -->
+    @for(m <- Seq(  Ids.round,
+                    Ids.influencePhase,
+                    Ids.actPhase,
+                    Ids.sourcePhase,
+                    Ids.majesty,
+                    Ids.createBeing) ){
+        <span id="messages_@m">@Messages(m)</span>
+    }
+    <span id="@Ids.imagesPath">@routes.Assets.versioned("images")</span>
+</div>

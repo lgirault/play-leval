@@ -5,7 +5,7 @@ import leval._
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
-import leval.core.PlayerId
+import leval.core.User
 import play.api.Logger
 
 /**
@@ -23,7 +23,7 @@ class UserActor
   out : ActorRef)
   extends Actor with ActorLogging {
 
-  var thisId : Option[PlayerId] = None
+  var thisId : Option[User] = None
 
   var challengeActor : Option[ActorRef] = None
 
@@ -31,7 +31,7 @@ class UserActor
   def handleMsgFromUser(msg : Message) : Unit =
     msg match {
       case IdedMessage(id, Join(login)) =>
-        thisId = Some(PlayerId(id, login))
+        thisId = Some(User(id, login))
         loginActor ! msg
 
       case cd @ ChallengeDenied(_) =>

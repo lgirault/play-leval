@@ -3,7 +3,7 @@ package leval.actors
 import javax.inject.Inject
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import leval.core.PlayerId
+import leval.core.User
 
 import scala.collection.immutable.{HashMap, IntMap}
 import leval._
@@ -24,7 +24,7 @@ class LoginActor @Inject() extends Actor
       if(pending contains login)
         sender() ! ConnectNack("user already pending")
       else {
-        val id = PlayerId(usersId, login)
+        val id = User(usersId, login)
         usersId += 1
         pending += login
         println(sender())
@@ -56,8 +56,8 @@ class LoginActor @Inject() extends Actor
     case msg @ IdedMessage(challenged, GameDescription(challenger, rules)) =>
       val map =
         Map(
-          challenged -> users(challenged)._2,
-          challenger.uuid -> users(challenger.uuid)._2
+          challenged -> users(challenged),
+          challenger.uuid -> users(challenger.uuid)
         )
 
       val ca = context actorOf ChallengeActor(map, rules)

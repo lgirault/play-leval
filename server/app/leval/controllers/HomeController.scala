@@ -9,6 +9,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import leval._
 import leval.actors.UserActor
+import leval.core.User
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.streams.ActorFlow
@@ -39,7 +40,11 @@ class HomeController @Inject()
     Ok(leval.views.html.index())
    }
 
-
+  def test = Action { implicit request =>
+    //request.queryString
+    //Ok(leval.views.html.test())
+    Ok(leval.views.html.starList(User(0, "Toto")))
+  }
 
   implicit val timeout = Timeout(500, TimeUnit.MILLISECONDS)
 

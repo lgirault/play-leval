@@ -1,8 +1,8 @@
 package leval
 
 import org.scalajs.dom._
-import leval.core.{PlayerId, Rules}
-import Util.DivOps
+import leval.core.{User, Rules}
+import Util.ElementOps
 /**
   * Created by lorilan on 12/25/16.
   */
@@ -29,7 +29,7 @@ object ChallengedNotification {
 
   }
 
-  def update(challenger : PlayerId,
+  def update(challenger : User,
              rules : Rules) : Unit = {
 
 

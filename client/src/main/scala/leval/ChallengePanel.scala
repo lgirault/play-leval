@@ -1,6 +1,6 @@
 package leval
 
-import leval.core.PlayerId
+import leval.core.User
 import org.scalajs.dom.{MouseEvent, console, document, html}
 import leval.Util._
 /**
@@ -11,7 +11,7 @@ object ChallengePanel {
  val challengeForm : html.Form = document.getElementById("challengeForm").asInstanceOf[html.Form]
 
 
-  def display(pid : PlayerId) : Unit = {
+  def display(pid : User) : Unit = {
     val panel = document.getElementById("challengePanel").asInstanceOf[html.Div]
     panel.show()
     document.getElementById("challengedName").textContent = pid.name

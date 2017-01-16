@@ -1,30 +1,43 @@
 
-@import leval.core.PlayerId
+@import leval.core.User
 
-@(pid: PlayerId)(implicit r: Request[_], messages: Messages)
-@main("Le Val", Seq("starList")) {
+@(user: User)(implicit r: Request[_], messages: Messages)
+@main("Le Val",
+    Seq("starList_layout",
+        "starList_dropdown",
+        "gameScreen")) {
 
-<div><h1>Salon</h1></div>
-<div id="starList" class="blueRoundBorder">
-    <h1>Étoiles</h1>
-    <ul data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
-    </ul>
-    <div class="dropdown">
-        <a id="challengeLink" >Défier</a>
-        <a id="pmLink" >Discuter</a>
+    <div id="starList" class="blueRoundBorder">
+        <h1>Étoiles</h1>
+        <ul data-ws-url="@(leval.controllers.routes.HomeController.ws.webSocketURL())">
+        </ul>
+        <div class="dropdown">
+            <a id="challengeLink" >Défier</a>
+            <a id="pmLink" >Discuter</a>
+        </div>
     </div>
-</div>
 
-@challengePanel(pid)
+    <div id="left_wrapper">
+    <div id="nav_wrapper">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#">Salon</a></li>
+        </ul>
+    </div>
 
-@challengedNotification()
+    @gameScreen()
+    </div>
 
-@scalajs.html.scripts(
-"client",
-routes.Assets.versioned(_).toString,
-name => getClass.getResource(s"/public/$name") != null)
+    @challengePanel(user)
 
-<script type="text/javascript">
-      leval.Front().starListInit(@pid.uuid, "@pid.name");
-</script>
+    @challengedNotification()
+
+    @scalajs.html.scripts(
+    "client",
+    routes.Assets.versioned(_).toString,
+    name => getClass.getResource(s"/public/$name") != null)
+
+    <script type="text/javascript">
+          leval.Front().starListInit(@user.uuid, "@user.name");
+          leval.Front().test();
+    </script>
 }

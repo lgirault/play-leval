@@ -4,7 +4,7 @@ package leval.core
   * Created by Loïc Girault on 20/06/16.
   */
 object Suit {
-  val list = List(Diamond, Club, Heart, Spade)
+  val values = List(Diamond, Club, Heart, Spade)
 }
 sealed abstract class Suit
 case object Diamond extends Suit//carreau
@@ -22,12 +22,10 @@ case object King extends Face
 case class Numeric(value: Int) extends Rank
 
 //Cards keep their id deck
-//its necessary because being maps are indexed by the card
-
+//its necessary for 4 players game with 2 decks
+//because being maps are indexed by the card
 sealed abstract class Card
 case class C(deckId : Byte, rank: Rank, suit: Suit) extends Card
-
-
 case class J(deckId : Byte, color : Joker.Color) extends Card
 object Joker {
   sealed abstract class Color

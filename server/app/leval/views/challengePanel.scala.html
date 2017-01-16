@@ -1,7 +1,7 @@
 
-@import leval.core.{PlayerId, Rules}
+@import leval.core.{User, Rules}
 
-@(pid: PlayerId)(implicit messages: Messages)
+@(user: User)(implicit messages: Messages)
 
 <div id="challengePanel" class="blueRoundBorder centered">
     <h1>Défier <span id="challengedName"/></h1>
@@ -13,15 +13,15 @@
             <option value="@cr.id" selected>@cr</option>
             }
         </select> <br/>
-        <input type ="checkbox" name="ostein" /> O'Stein <br/>
         <input type ="checkbox" name="allowMulligan" />  @Messages("allowed_mulligan") <br/>
         <!--
+            <input type ="checkbox" name="ostein" /> O'Stein <br/>
             <input type ="checkbox" name="nedemone" disabled />Nédémone <br/>
             <input type ="checkbox" name="janus" disabled />Janus <br/>
         -->
         <input type="hidden" name="challengedId" value="-1">
-        <input type="hidden" name="playerId" value="@pid.uuid">
-        <input type="hidden" name="playerName" value="@pid.name">
+        <input type="hidden" name="playerId" value="@user.uuid">
+        <input type="hidden" name="playerName" value="@user.name">
 
         <button type ="submit">OK</button>
     </form>
